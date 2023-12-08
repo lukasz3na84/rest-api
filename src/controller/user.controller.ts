@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import log from '../utils/logger';
 import { omit } from 'lodash';
-import { createUser, findUser } from "../service/user.service";
+import { createUser, findUser, updateUserField } from "../service/user.service";
 import { CreateUserInput, VerifyUserSchema } from "../schema/user.schema";
 import sendEmail from "../utils/mailer";
 
@@ -29,14 +29,19 @@ export async function verifyUser(req: Request<VerifyUserSchema["params"]>, res: 
         const id = req.params.id;
         const user = await findUser({ _id: id });
         if (!user) {
-            return res.status(400).send('User not verified');
+            return res.send('User not verified');
         }
 
-        const verificationCode = req.params.verificationCode;      
-        if (verificationCode !== user.verificationCode) {
-            return res.status(400).send('User not verified');
+        if (user.verify) {
+            return res.send('User is already verified');
         }
-        return res.send('User successfully verified');
+
+        const verificationCode = req.params.verificationCode;
+        if (verificationCode === user.verificationCode) {
+            await updateUserField(user._id, { verify: true })
+            return res.send('User successfully verified');
+        }
+        return res.status(400).send('User not verified');
 
     } catch (error: any) {
         log.error(error)

@@ -1,4 +1,4 @@
-import { DocumentDefinition, FilterQuery } from 'mongoose'
+import { DocumentDefinition, FilterQuery, UpdateQuery } from 'mongoose'
 import UserModel, { UserDocument } from '../models/user.model';
 import { omit } from 'lodash';
 
@@ -14,6 +14,7 @@ export async function createUser(input: DocumentDefinition<Omit<UserDocument, "c
 
 export async function validatePassword({ email, password }: { email: string, password: string }) {
     const user = await UserModel.findOne({ email });
+
     if (!user) {
         return false;
     }
@@ -23,10 +24,15 @@ export async function validatePassword({ email, password }: { email: string, pas
     return omit(user.toJSON(), "password");
 }
 
-export  async function findUser(query: FilterQuery<UserDocument>) {
+export async function findUser(query: FilterQuery<UserDocument>) {
     const user = await UserModel.findOne(query).lean();
     if (!user) {
         return false;
     }
     return omit(user, "password");
+}
+
+export async function updateUserField( userId: FilterQuery<UserDocument>, update: UpdateQuery<UserDocument> ) {
+await UserModel.updateOne({ _id: userId }, { $set: update });
+console.log('Pomyślnie zaktualizowano pole "verify".');
 }
