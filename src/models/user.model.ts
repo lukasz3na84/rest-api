@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import config from "config";
 import bcrypt from "bcrypt";
-
+import { v4 as uuidv4 } from 'uuid';
 
 //tutaj "document" jako instancja
 //porzebny do przekazania do serwisu
@@ -11,6 +11,8 @@ export interface UserDocument extends mongoose.Document {
     password: string;
     createdAt: Date;
     updatedAt: Date;
+    verificationCode: string
+    verify: boolean
     comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -18,7 +20,9 @@ const UserSchema = new mongoose.Schema(
     {
         email: { type: String, required: true, unique: true },
         name: { type: String, required: true },
-        password: { type: String, required: true }
+        password: { type: String, required: true },
+        verificationCode: { type: String, required: true, default: () => uuidv4() },
+        verify: {type: Boolean, default: false}
     },
     {
         timestamps: true

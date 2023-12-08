@@ -22,6 +22,16 @@ Oznacza to, że informacja o błędzie zostanie przypisana do tego konkretnego p
 
 // typ CreateUserInput potrzebny do wyłaczenia "passwordConfirmation" z zapisu do DB (wyłaczenie w controlelrze i serwisie- bo w serwisie przenosimy całe req.body z cotrollera)
 //porzebny do przekazania do controllera
+
+export const verifyUserSchema = object({
+    params: object({
+        id: string({ required_error: 'ID is required' }),
+        verificationCode: string({ required_error: 'Verification code is required' })
+    })
+});
+
+export type VerifyUserSchema = TypeOf<typeof verifyUserSchema>;
+
 export type CreateUserInput = Omit<
 TypeOf<typeof createUserSchema>,
 "body.passwordConfirmation">;

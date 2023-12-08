@@ -1,5 +1,5 @@
 import { Express, Request, Response } from "express";
-import { createUserHandler } from "../controller/createUserHandler";
+import { createUserHandler, verifyUser } from "../controller/user.controller";
 import validateResources from "../middleware/validateResources";
 import { createUserSchema } from "../schema/user.schema";
 import createSessionSchema from "../schema/session.schema";
@@ -14,6 +14,9 @@ export default function (app: Express) {
     //Register user
     app.post('/api/users', validateResources(createUserSchema), createUserHandler);
 
+    //Verify user
+    app.post('/api/users/verify/:id/:verificationCode', verifyUser);
+    
     // POST /api/user
 
     //Login
