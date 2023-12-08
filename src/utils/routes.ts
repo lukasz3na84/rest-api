@@ -1,7 +1,7 @@
 import { Express, Request, Response } from "express";
-import { createUserHandler, verifyUser } from "../controller/user.controller";
+import { createUserHandler, forgotPasswordHandler, verifyUser } from "../controller/user.controller";
 import validateResources from "../middleware/validateResources";
-import { createUserSchema } from "../schema/user.schema";
+import { createUserSchema, forgotPasswordUserSchema } from "../schema/user.schema";
 import createSessionSchema from "../schema/session.schema";
 import { createUserSessionHandler, deleteSessionsHandler, getUserSessionsHandler } from "../controller/session.controller";
 import requireUser from "../middleware/requireUser";
@@ -17,11 +17,13 @@ export default function (app: Express) {
     //Verify user
     app.post('/api/users/verify/:id/:verificationCode', verifyUser);
     
-    // POST /api/user
-
+   
     //Login
     // POST /api/sessions
     app.post('/api/sessions', validateResources(createSessionSchema), createUserSessionHandler);
+
+    //send reset password email
+    app.post('/api/users/forgotpassword', validateResources(forgotPasswordUserSchema), forgotPasswordHandler)
 
     //get user's sesions
     // GET /api/sessions

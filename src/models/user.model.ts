@@ -12,7 +12,8 @@ export interface UserDocument extends mongoose.Document {
     createdAt: Date;
     updatedAt: Date;
     verificationCode: string
-    verify: boolean
+    verify: boolean,
+    passwordResetCode: string | null
     comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -22,7 +23,8 @@ const UserSchema = new mongoose.Schema(
         name: { type: String, required: true },
         password: { type: String, required: true },
         verificationCode: { type: String, required: true, default: () => uuidv4() },
-        verify: {type: Boolean, default: false}
+        verify: {type: Boolean, default: false},
+        passwordResetCode: { type: String || null },
     },
     {
         timestamps: true
