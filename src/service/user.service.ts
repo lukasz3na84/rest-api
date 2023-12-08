@@ -34,5 +34,4 @@ export async function findUser(query: FilterQuery<UserDocument>) {
 
 export async function updateUserField( userId: FilterQuery<UserDocument>, update: UpdateQuery<UserDocument> ) {
 await UserModel.updateOne({ _id: userId }, { $set: update });
-console.log('Pomyślnie zaktualizowano pole "verify".');
 }
