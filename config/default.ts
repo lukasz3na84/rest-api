@@ -5,6 +5,13 @@ export default {
     saltWorkFactor: 10,
     accessTokenTtl: '15m',
     refreshTokenTtl: '1y',
+    smtp: {
+        user: 'selena.west@ethereal.email',
+        pass: 'MEZUaSwXBWdj6dxyKd',
+        host: 'smtp.ethereal.email',
+        port: 587,
+        secure: false
+    },
     publicKey: `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAq6MW8v1VxwFaJO+1nTVj
 yEopxFD7juyq7f7n78gBBT/bcifL2UWoi+kZ6YnADwB3r1qs4YYDrP+fDxwpcMOS
