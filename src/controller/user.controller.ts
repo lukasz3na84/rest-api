@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import log from '../utils/logger';
 import { omit } from 'lodash';
 import { createUser, findUser, updateUserField } from "../service/user.service";
-import { CreateUserInput, ForgotPasswordUserInput, VerifyUserInput } from "../schema/user.schema";
+import { CreateUserInput, ForgotPasswordUserInput, ResetPasswordInput, VerifyUserInput } from "../schema/user.schema";
 import sendEmail from "../utils/mailer";
 import { v4 as uuidv4 } from "uuid";
 
@@ -78,4 +78,18 @@ export async function forgotPasswordHandler(req: Request<{}, {}, ForgotPasswordU
     log.debug(`Password reset email sent to ${email}`);
     return res.send(message);
     
+}
+
+export async function resetPasswordHandler(req: Request<ResetPasswordInput["params"], {}, ResetPasswordInput["body"]>, res: Response) {
+    const { id, passwordResetCode } = req.params;
+    const { password } = req.body;
+    const user = await findUser({ _id: id });
+    if(!user || user.passwordResetCode !== passwordResetCode) {
+        return res.status(400).send('Could not reset user password');
+    }
+    //wyczyszczenie pola aby nie mozna ponownie zresetować hasła tym kodem
+    await updateUserField(user._id, { passwordResetCode: null });
+
+    await updateUserField(user._id, { password });
+    return res.send('Successfully updated password');
 }

@@ -1,7 +1,7 @@
 import { Express, Request, Response } from "express";
-import { createUserHandler, forgotPasswordHandler, verifyUser } from "../controller/user.controller";
+import { createUserHandler, forgotPasswordHandler, resetPasswordHandler, verifyUser } from "../controller/user.controller";
 import validateResources from "../middleware/validateResources";
-import { createUserSchema, forgotPasswordUserSchema } from "../schema/user.schema";
+import { createUserSchema, forgotPasswordUserSchema, resetPasswordSchema } from "../schema/user.schema";
 import createSessionSchema from "../schema/session.schema";
 import { createUserSessionHandler, deleteSessionsHandler, getUserSessionsHandler } from "../controller/session.controller";
 import requireUser from "../middleware/requireUser";
@@ -23,7 +23,10 @@ export default function (app: Express) {
     app.post('/api/sessions', validateResources(createSessionSchema), createUserSessionHandler);
 
     //send reset password email
-    app.post('/api/users/forgotpassword', validateResources(forgotPasswordUserSchema), forgotPasswordHandler)
+    app.post('/api/users/forgotpassword', validateResources(forgotPasswordUserSchema), forgotPasswordHandler);
+
+    //reset password
+    app.post('/api/users/resetpassword/:id/:passwordResetCode', validateResources(resetPasswordSchema), resetPasswordHandler);
 
     //get user's sesions
     // GET /api/sessions
