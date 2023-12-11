@@ -67,27 +67,30 @@ export async function forgotPasswordHandler(req: Request<{}, {}, ForgotPasswordU
     const passwordResetCode = uuidv4();
     await updateUserField(user._id, { passwordResetCode });
 
-    await sendEmail({
-        to: user.email,
-        from: "test@example.com",
-        text: 
-        `Password reset code: ${passwordResetCode} 
+    try {
+        await sendEmail({
+            to: user.email,
+            from: "test@example.com",
+            text:
+                `Password reset code: ${passwordResetCode} 
         ID: ${user._id}`
-    });
-
-    log.debug(`Password reset email sent to ${email}`);
-    return res.send(message);
-    
+        });
+        log.debug(`Password reset email sent to ${email}`);
+        return res.send(message);
+    } catch (error: any) {
+        log.error(error);
+        return res.status(500).send("Internal Server Error");
+    }
 }
 
 export async function resetPasswordHandler(req: Request<ResetPasswordInput["params"], {}, ResetPasswordInput["body"]>, res: Response) {
     const { id, passwordResetCode } = req.params;
     const { password } = req.body;
     const user = await findUser({ _id: id });
-    if(!user || user.passwordResetCode !== passwordResetCode) {
+    if (!user || user.passwordResetCode !== passwordResetCode) {
         return res.status(400).send('Could not reset user password');
     }
-    //wyczyszczenie pola aby nie mozna ponownie zresetować hasła tym kodem
+    // /wyczyszczenie pola aby nie mozna ponownie zresetować hasła tym kodem
     await updateUserField(user._id, { passwordResetCode: null });
 
     await updateUserField(user._id, { password });

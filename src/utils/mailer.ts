@@ -1,14 +1,25 @@
 import nodemailer, { SendMailOptions } from 'nodemailer';
 import config from 'config';
 import log from './logger';
+import * as dotenv from 'dotenv';
 
-const smtp = config.get<{
-    user: string,
-    pass: string,
-    host: string,
-    port: number,
-    secure: boolean
-}>("smtp");
+dotenv.config();
+
+interface SmtpConfig {
+    user: string;
+    pass: string;
+    host: string;
+    port: number;
+    secure: boolean;
+}
+
+const smtpConfig: SmtpConfig = {
+    user: process.env.SMTP_USER || '',
+    pass: process.env.SMTP_PASS || '',
+    host: process.env.SMTP_HOST || 'smtp.ethereal.email',
+    port: parseInt(process.env.SMTP_PORT || '0', 10),
+    secure: process.env.SMTP_SECURE === 'true',
+};
 
 // async function createTestCreds() {
 //     const creds = await nodemailer.createTestAccount();
@@ -18,21 +29,25 @@ const smtp = config.get<{
 // createTestCreds();
 
 const transporter = nodemailer.createTransport({
-    ...smtp,
+    ...smtpConfig,
     auth: {
-        user: smtp.user,
-        pass: smtp.pass
+        user: smtpConfig.user,
+        pass: smtpConfig.pass
     }
 });
 
 async function sendEmail(payload: SendMailOptions) {
-    transporter.sendMail(payload, (err, info) => {
-        if (err) {
-            log.error(err, "Error sending email");
-            return
-        }
-        log.info(`Preview URL: ${nodemailer.getTestMessageUrl(info)} `);
-    })
+    return new Promise((resolve, reject) => {
+        transporter.sendMail(payload, (err, info) => {
+            if (err) {
+                log.error(err);
+                reject(err)
+            } else {
+                log.info(`Preview URL: ${nodemailer.getTestMessageUrl(info)} `);
+                resolve(info);
+            }
+        })
+    });
 }
 
 export default sendEmail;
