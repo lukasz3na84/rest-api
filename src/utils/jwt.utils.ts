@@ -1,8 +1,8 @@
-import config from 'config';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
+import '../middleware/dotenvMiddleware';
 
-const privateKey = config.get<string>("privateKey");
-const publicKey = config.get<string>("publicKey");
+const privateKey = process.env.PRIVATE_KEY ?? '';
+const publicKey = process.env.PUBLIC_KEY ?? '';
 
 // Zapis ...(options && options) w kontekście JavaScript jest używany do rozpakowywania obiektu options, 
 // ale tylko wtedy, gdy options jest zdefiniowane (nie jest undefined). Działa to na zasadzie krótkiego układu oceny (ternary operator), 

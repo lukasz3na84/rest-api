@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import config from "config";
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -39,7 +38,7 @@ UserSchema.pre("save", async function (next: mongoose.HookNextFunction) {
     if (!user.isModified("password")) return next()
 
     //Random additional data
-    const salt = await bcrypt.genSalt(config.get<number>("saltWorkFactor"));
+    const salt = await bcrypt.genSalt(parseInt(process.env.SALT_WORK_FACTOR ?? ''));
     const hash = await bcrypt.hashSync(user.password, salt);
 
     //replace the password with the hash

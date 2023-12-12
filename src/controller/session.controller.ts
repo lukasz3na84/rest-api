@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { validatePassword } from "../service/user.service";
 import { createSession, findSessions, updateSession } from "../service/session.service";
 import { signJWT } from "../utils/jwt.utils";
-import config from "config";
 
 export async function createUserSessionHandler(req: Request, res: Response) {
 
@@ -18,13 +17,13 @@ export async function createUserSessionHandler(req: Request, res: Response) {
     // create an access token
     const accessToken = await signJWT(
         { ...user, session: session._id },
-        { expiresIn: config.get('accessTokenTtl') }
+        { expiresIn: process.env.ACCESS_TOKEN_TTL ?? '' }
     );
 
     // create a refresh token
     const refreshToken = await signJWT(
         { ...user, session: session._id },
-        { expiresIn: config.get('refreshTokenTtl') }
+        { expiresIn: process.env.REFRESH_TOKEN_TTL ?? '' }
     );
     // return access & refresh tokens
     res.send({ accessToken, refreshToken });

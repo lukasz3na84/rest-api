@@ -1,9 +1,6 @@
 import nodemailer, { SendMailOptions } from 'nodemailer';
-import config from 'config';
 import log from './logger';
-import * as dotenv from 'dotenv';
-
-dotenv.config();
+import '../middleware/dotenvMiddleware';
 
 interface SmtpConfig {
     user: string;
@@ -14,9 +11,9 @@ interface SmtpConfig {
 }
 
 const smtpConfig: SmtpConfig = {
-    user: process.env.SMTP_USER || '',
-    pass: process.env.SMTP_PASS || '',
-    host: process.env.SMTP_HOST || 'smtp.ethereal.email',
+    user: process.env.SMTP_USER ?? '',
+    pass: process.env.SMTP_PASS ?? '',
+    host: process.env.SMTP_HOST ?? '',
     port: parseInt(process.env.SMTP_PORT || '0', 10),
     secure: process.env.SMTP_SECURE === 'true',
 };

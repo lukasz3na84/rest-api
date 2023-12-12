@@ -2,7 +2,6 @@ import { FilterQuery, UpdateQuery } from "mongoose";
 import SessionModel, { SessionDocument } from "../models/session.model";
 import { signJWT, verifyJWT } from "../utils/jwt.utils";
 import { get } from "lodash";
-import config from "config";
 import { findUser } from "./user.service";
 
 export async function createSession(userId: string, userAgent: string) {
@@ -42,7 +41,7 @@ export async function reIssueAccessToken({ refreshToken }: { refreshToken: strin
     //jak mamy usera i sesje, to robimy nowy accessToken
     const accessToken = signJWT(
         { ...user, session: session._id },
-        { expiresIn: config.get("accessTokenTtl") } // 15 minutes
+        { expiresIn: process.env.ACCESS_TOKEN_TTL } // 15 minutes
     );
 
     return accessToken;
