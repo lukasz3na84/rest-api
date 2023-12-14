@@ -79,7 +79,7 @@ export async function forgotPasswordHandler(req: Request<{}, {}, ForgotPasswordU
         return res.send(message);
     } catch (error: any) {
         log.error(error);
-        return res.status(500).send("Internal Server Error");
+        return res.status(409).send(error.message);
     }
 }
 
